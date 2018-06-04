@@ -8,9 +8,16 @@ use App\Post;
 
 class BlogController extends Controller
 {
-    public function index()
-    {
-        $posts = Post::all();
+    protected $limit = 3;
+
+    public function index() {
+        \DB::enableQueryLog();
+        $posts = Post::with('author')
+                ->latestFirst()
+                ->published()
+                ->simplePaginate($this->limit);
+//        view('blog.index', compact('posts'))->render();
+//        dd(\DB::getQueryLog());
         return view('blog.index', compact('posts'));
     }
 }
